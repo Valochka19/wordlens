@@ -1,61 +1,65 @@
 # WordLens
 
-Наводишь курсор на английское слово в любом окне, жмёшь клавишу, рядом всплывает перевод этого слова **именно в этом предложении**: транскрипция, часть речи, фразовый глагол или идиома, если слово их часть, и короткое пояснение. Для тех, кто учит английский, а не переводит страницы целиком.
+Point the cursor at any English word on screen, press a hotkey, and a small popup explains that word **in this exact sentence**: contextual translation, IPA, part of speech, the phrasal verb or idiom it belongs to, and a one-line note. Made for people learning English, not for translating whole pages.
 
-Point at any English word on screen, press a hotkey, get the word explained in its context. A Lookupper-style overlay for Windows, built for language learners.
+A Lookupper-style overlay for Windows. UI and explanations are in Russian, since the target user is a Russian speaker learning English.
 
-![Главная](docs/screenshots/Home.png)
+![Home](docs/screenshots/Home.png)
 
-## Что умеет
+## Features
 
-- **Одно слово.** Курсор на слово, короткое нажатие клавиши (по умолчанию `F8`). Перевод в контексте, начальная форма, IPA, часть речи, другие значения, фразовый глагол или идиома.
-- **Фраза.** Зажал клавишу, повёл мышкой, слова подсвечиваются по ходу. Отпустил: перевод фразы, разбор 2–5 ключевых слов, заметка про грамматику.
-- **Мой словарь.** Звёздочка сохраняет слово с контекстом. Список с датами, статистика на главной.
-- **Озвучка** слова системным голосом Windows.
-- Работает поверх игр в оконном или borderless-режиме, браузера, видео, любых программ.
+- **Single word.** Hover, tap the hotkey (default `F8`). You get the in-context meaning, lemma, IPA, part of speech, other common meanings, and the phrasal verb or idiom if the word is part of one.
+- **Phrase.** Hold the key and drag: words highlight as you go. Release: natural translation of the phrase, 2–5 key words worth learning, and a short grammar note.
+- **My words.** Star a word to save it with its context. List with dates, stats on the home page.
+- **Pronunciation** via the built-in Windows voice.
+- Works on top of games (windowed / borderless), browsers, video players, any window.
 
-## Как это устроено
+## How it works
 
-| Часть | Чем сделано | Почему |
+| Part | Built with | Why |
 |---|---|---|
-| Снимок экрана и распознавание | `Windows.Media.Ocr` (встроен в Windows 10/11) | Даёт координаты каждого слова, ничего скачивать не нужно |
-| Горячая клавиша | `RegisterHotKey` | Без хуков клавиатуры и инъекций в чужие процессы, безопасно для античитов |
-| Окна подсказок | WPF, `WS_EX_NOACTIVATE` | Не забирают фокус у игры или программы |
-| Объяснение слова | DeepSeek `deepseek-chat`, ответ строго JSON | Понимает контекст, исправляет ошибки OCR по смыслу |
-| Настройки и словарь | `%AppData%\WordLens\*.json` | Ключ API хранится только у пользователя |
+| Screen capture and text recognition | `Windows.Media.Ocr` (ships with Windows 10/11) | Returns coordinates for every word, nothing to download |
+| Hotkey | `RegisterHotKey` | No keyboard hooks, no injection into other processes, anti-cheat safe |
+| Popups | WPF windows with `WS_EX_NOACTIVATE` | Never steal focus from the game or app |
+| Explanation | DeepSeek `deepseek-chat`, strict JSON response | Understands context and fixes OCR mistakes by meaning |
+| Settings and word list | `%AppData%\WordLens\*.json` | The API key stays on the user's machine |
 
-Снимок делается один раз в момент нажатия, распознавание идёт по нему. Программа не читает память других процессов и не перехватывает ввод.
+The screenshot is taken once at the moment the key is pressed and OCR runs on that image. The app never reads other processes' memory and never intercepts input.
 
-## Запуск
+## Running
 
-Нужны Windows 10 (19041) или 11, .NET 9 и английский язык распознавания в системе (Параметры → Время и язык → Язык → English → Распознавание текста).
+Requires Windows 10 (build 19041) or 11, .NET 9, and the English OCR language pack (Settings → Time & Language → Language → English → Text recognition).
 
 ```powershell
 dotnet build -c Release
 .\bin\Release\net9.0-windows10.0.19041.0\WordLens.exe
 ```
 
-В настройках вставить ключ DeepSeek (platform.deepseek.com), при желании сменить клавишу.
+Paste a DeepSeek API key (platform.deepseek.com) in Settings and change the hotkey if you like.
 
-Служебные режимы:
+Utility modes:
 
 ```powershell
-WordLens.exe --selftest report.txt     # проверка OCR и жеста выделения без API
-WordLens.exe --shots папка             # PNG всех страниц окна с демо-данными
+WordLens.exe --selftest report.txt     # OCR and drag-select self-test, no API calls
+WordLens.exe --shots folder            # renders every page of the main window to PNG with demo data
 ```
 
-## Скриншоты
+## Screenshots
 
-| Мой словарь | Настройки |
+| My words | Settings |
 |---|---|
 | ![](docs/screenshots/Words.png) | ![](docs/screenshots/Settings.png) |
 
-## Ограничения
+## Limitations
 
-- Только Windows, только оконный или borderless-режим для игр (в эксклюзивном полноэкранном снимок экрана пустой).
-- Качество распознавания зависит от шрифта: обычный текст читается уверенно, стилизованные игровые шрифты не всегда.
-- Нужен собственный ключ DeepSeek, запросы платные (доли цента за слово).
+- Windows only. Games must run windowed or borderless: exclusive fullscreen yields an empty capture.
+- Recognition quality depends on the font. Regular UI and web text is reliable; stylised game fonts are hit and miss.
+- You need your own DeepSeek key; requests are paid (a fraction of a cent per word).
 
-## Планы
+## Roadmap
 
-Экспорт в Anki, повторение слов внутри программы, автозапуск, сборка в один exe.
+Anki export, in-app spaced repetition, start with Windows, single-file build.
+
+---
+
+*По-русски: наводишь курсор на английское слово, жмёшь клавишу, видишь перевод именно в этом предложении. Для тех, кто учит английский.*
