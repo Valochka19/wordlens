@@ -1,0 +1,8 @@
+bin/
+obj/
+_old/
+*.user
+*.suo
+.vs/
+*.txt
+!docs/**
